@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html  xmlns:th="http://www.thymeleaf.org">
+<head>
+<meta charset="UTF-8">
+<title>Insert title here</title>
+<!-- 
+	th:include   ：将页面碎片包含到当前页面中    标签内部的内容不会被覆盖，引入的页面碎片会追加到下面
+	th:insert    : 将页面碎片插入到当前页面中   新增  ，代表使用新的标签引入页面碎片
+	th:replace   : 将页面碎片引入到当前页面中并覆盖所在标签内的内部内容
+		
+		th:replace="~{include/base_include::bsFragment}"
+			include/base_include  会交给thymeleaf的视图解析器解析，查找要引入的片段的页面	
+			bsFragment   代表要引入的页面片段 的th:fragment的值
+		th:insert="~{include/base_include::#idBsFragment}"
+			#idBsFragment  代表要引入的页面片段的 id值		
+ -->
+<!-- <div th:replace="~{include/base_include::bsFragment1}"></div> -->
+<!-- <div th:insert="~{include/base_include::#idBsFragment}"></div> -->
+ <div th:insert="~{include/base_include::.classBsFragment}"></div>
+</head>
+<body>
+
+
+	<!-- 
+		1、从域中获取属性值
+		2、将属性值显示到标签内
+			标签的 th:text属性，使用thymeleaf取出值之后会自动显示到标签内部覆盖标签内的默认内容
+			 th:text属性值中可以使用简单的表达式    三元运算符、> < == ....
+			 
+			 th:text="${sessionKey}==null?_:${sessionKey}"   三元运算符，如果从域中没有获取到内容 则不覆盖标签内的默认值，如果取到则覆盖
+					也支持字符串拼接，字面量需要使用引号引起
+		3、判断
+		4、遍历
+			th:each="user,vs:${session.users}"    ,遍历，每次会将正在遍历的元素 以user为key存到request域中，将正在遍历的状态值更新以vs为key也存到request域中
+										每次遍历都会将当前标签创建一个
+		5、页面共有部分的提取+引入
+		
+		6、标签的属性设置
+			th:attr="xx"
+		
+			thymeleaf 不能直接在空白地方编写表达式，一般是在标签内的属性值中使用thymeleaf的语法
+			获取域中属性值：${表达式}
+				${key}  默认只能从request域中取值，其他域必须指定
+				${session.key}
+				${application.key}
+		thymeleaf中的所有的表达式格式：
+				
+			获取域中的属性值或者进行简单的运算：${表达式}	  √
+			自动处理路径，在传入的绝对路径前拼接全局上下文路径 @{}  √
+						以后页面中所有的 th:href,th:src 属性值设置绝对路径时，如果需要动态获取上下文路径  都使用@{路径}
+			从指定的页面中引入页面片段到当前页面的指定位置 ~{}   √
+						
+			国际化使用，自动会根据浏览器的语言环境从国际化文件中加载不同的内容显示：#{}	 不用
+			  
+			使用正在遍历的对象，表达式使用对象的属性名直接可以获取属性值：  *{属性名}	
+	 -->
+	 request:<div th:text="'从request域中获取的属性值为:' + ${reqKey}">requet域默认值</div>
+	 <hr/>
+	 session:<div th:text="${session.sessionKey}==null?_:'从session域获取到的属性值为:' + ${session.sessionKey}">session域默认值</div>
+	 <hr/>
+	 application:<div th:text="${application.appKey}==null?_:${application.appKey}">application域默认值</div>
+	 <hr/>
+	 <!-- 分布式session存储自定义类型的对象时，必须实现序列化接口 -->
+	 <!-- 判断集合是否为空 -->
+	 <span th:if="${session.users}==null">
+	 	<h1>user集合为空</h1>
+	 </span>
+	 <div th:if="${session.users}!=null">
+	 	<!-- 遍历将users集合中的数据显示到table中：
+	 			users集合对应一个table
+	 			集合中的一个user对象使用一个tr显示
+	 			user对象的一个属性值使用tr的一个td显示
+	 			
+	 	 -->
+	 	 <table th:class="table"  th:classappend="table-hover" >
+	 	 	<tr>
+	 	 		<th>序号</th>
+	 	 		<th>id</th>
+	 	 		<th>账号</th>
+	 	 		<th>密码</th>
+	 	 		<th>邮箱</th>
+	 	 	</tr>
+	 	 	<tr th:each="user,vs:${session.users}">
+	 	 		<td th:text="${vs.count}"></td>
+	 	 		<td th:text="${user.id}"></td>
+	 	 		<td th:text="${user.username}"></td>
+	 	 		<td th:text="${user.password}"></td>
+	 	 		<td th:text="${user.email}"></td>
+	 	 		
+	 	 	</tr>
+	 	 
+	 	 </table>
+	 </div>
+	 <hr>
+	 
+	 <a  th:href="@{/a}"> hehe </a>
+	 <hr>
+	 <!-- 直接在页面中使用thymeleaf -->
+	 <div>从requet域中获取属性值：[[${session.users[0]}]]</div>
+	 <hr>
+	 
+	 <div th:object="${session.users[0]}">
+	 	<span th:text="*{id}"></span>
+	 	<span th:text="*{username}"></span>
+	 	<span th:text="*{password}"></span>
+	 	<span th:text="*{email}"></span>
+	 </div>
+	 
+	 
+	 
+</body>
+</html>

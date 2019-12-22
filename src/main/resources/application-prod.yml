@@ -1,0 +1,38 @@
+spring:
+  application:
+    name: scw-webui
+  datasource:
+    url: jdbc:mysql://101.132.138.187:3306/atcrowdfunding
+    username: root
+    password: 123456
+    driver-class-name: com.mysql.jdbc.Driver
+    type: com.alibaba.druid.pool.DruidDataSource   #指定创建数据库连接池的类型
+  redis:
+    host: 101.132.138.187  #redis的主机ip
+    port: 6379    #redis启动的端口号
+    password: 123456
+server:
+  port: 10000
+  
+eureka:
+  instance:
+    ip-address: 101.132.138.187
+    prefer-ip-address: true
+  client:
+    service-url:
+      defaultZone: http://106.14.189.205:8761/eureka/
+feign:
+  hystrix:
+    enabled: true      
+    
+#数据库连接池参数
+#配置mybatis的 全局文件和mapper映射文件的路径
+mybatis:
+  config-location: classpath:/mybatis/mybatis-config.xml   #指定mybatis全局配置文件
+  mapper-locations: classpath:/mybatis/mapper/*.xml         # 指定mapper映射文件
+  
+  
+#redis的配置
+    
+    
+      
